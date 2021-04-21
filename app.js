@@ -1,5 +1,25 @@
 const Url = "http://18.220.85.60/api/"; //this constant holds the base url for the Microservice API, you will append the API route to this value
 
+function realtimeClock(){
+    var rtClock = newDate();
+    var hours = rtClock.getHours();
+    var minutes = rtClock.getMintues();
+    var seconds = rtClock.getSeconds();
+    // am and pm system
+    var amPm = (hours <12) ? "AM" : "PM";
+
+    //converting hours to 12 hour
+    hours = (hours >12) ? hours -12: hours;
+
+    //pad for leading zeros
+    hours = ("0" + hours).slice(-2);
+    minutes = ("0"+ minutes).slice(-2);
+    seconds= ("0" +seconds).slice(-2);
+
+    //display clock function
+    document.getElementById('clock').innerHTML = hours + " : " + minutes + " : " + seconds + " " + amPm;
+    var t = setTimeout(realtimeClock, 500);
+}
 function fetchProductList() {
 
     jsonObj = [];
@@ -163,22 +183,47 @@ function fetchComments($id) {
 }
 
 function setComment($id) {
+    var commentAdd;
+    let comment =$.trim($('#message-text').val());
+    let score =$.trim($('#score').val());
 
-    //TODO complete implementation using the product id
-    alert("app.js/setComment() not implemented")
+    $.ajax({
+        url: Url+'SetComment',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify({"product_id":$id,"comment":comment,"score":score}),
+        contentType: 'application/json',
 
-    //HINT
-    //Take note of how the Ajax call in app.js/fetchComments() posts a GET request to corresponding API endpoint.
-    //Look at the Microservice API Documentation and find out the appripriate type of request for this action.
-
+        success: function (data) { 
+            alert("Comment as been added");
+        },
+        error: function (data) { //on error, throw an alert
+            alert("Error with comment");
+            console.log(data);
+        }
+    });
 }
+
 
 function addToCart($id) {
 
-    //TODO complete implementation using the product id
-    alert("app.js/addToCart() not implemented")
+   let email =$.trim($('#email').val()); 
+    $.ajax({
+        url: Url + 'AddToCart',
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify({"email":email,"product_id":$id}),
+        contentType: 'application/json',
+        success: function (data) {
+            alert("Product has been added to Cart");
+       
 
-
+        },
+        error: function (data) {
+            alert("Error to add");
+            console.log(data);
+        }
+    });
 }
 
 function toShoppingCart(){

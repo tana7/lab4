@@ -6,6 +6,27 @@ let totalPrice;
 
 let email = sessionStorage.getItem('email'); //gets the users email from sessionStorage
 
+function realtimeClock(){
+    var rtClock = newDate();
+    var hours = rtClock.getHours();
+    var minutes = rtClock.getMintues();
+    var seconds = rtClock.getSeconds();
+    // am and pm system
+    var amPm = (hours <12) ? "AM" : "PM";
+
+    //converting hours to 12 hour
+    hours = (hours >12) ? hours -12: hours;
+
+    //pad for leading zeros
+    hours = ("0" + hours).slice(-2);
+    minutes = ("0"+ minutes).slice(-2);
+    seconds= ("0" +seconds).slice(-2);
+
+    //display clock function
+    document.getElementById('clock').innerHTML = hours + " : " + minutes + " : " + seconds + " " + amPm;
+    var t = setTimeout(realtimeClock, 500);
+}
+
 getCart(email);
 
 function getCart($email) {
@@ -44,20 +65,43 @@ function getCart($email) {
 
         },
         error: function (data) {
-            alert("Error while fetching data.");
+            alert("Error occured");
         }
     });
 }
 
 function deleteItem($id) {
 
-    //TODO complete implementation using the product id
-    alert("cart.js/deleteItem() is not implemented")
+    $.ajax({
+        url: Url+'Cart/'+$id, 
+        type: 'DELETE',
+        success: function () {
+            alert("item deleted")
+        },
+        error: function () {
+            alert("Error occured");
+            console.log()
+        }
+
+    });
 }
+
 
 function checkOut() {
 
-    //TODO complete implementation
-    alert("cart.js/checkOut() is not implemented")
+    $.ajax({
+        url: Url + 'Cart',
+        type: 'PUT',
+        dataType: 'json',
+        data: JSON.stringify({"email":email}),
+        contentType: 'application/json',
+        success: function () {
+            alert("Item has been checked out")
+        },
+        error: function () {
+            alert("Error occured");
+            console.log()
+        }
 
+    });
 }
